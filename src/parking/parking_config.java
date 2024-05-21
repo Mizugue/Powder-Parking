@@ -65,12 +65,12 @@ public class parking_config {
 
 
 
-    public void stagnate(Car car, Integer row_vacancy, Integer column_vacancy, int time) {
+    public void stagnate(Car car, int row_vacancy, int column_vacancy, int time) {
         if (time < min_hour) {
             System.out.println(String.format("Do you cannot stay %d hora (min %d)!", time, min_hour));
             return;
         }
-
+    
         String color = car.getCor().toString();
         String color_car_emoji = "";
         switch (color) {
@@ -90,35 +90,35 @@ public class parking_config {
                 color_car_emoji = "\uD83D\uDE99";
                 break;
         }
-        for (int i = 0; i < size.length; i++) {
-            for (int j = 0; j < size.length; j++) {
-                if (i == row_vacancy && j == column_vacancy && size[i][j] == null) {
-                    if (car instanceof average_car) {
-                        size[i][j] = color_car_emoji;
-                        parked_cars[i][j] = car;
-                        size[i + 1][j] = color_car_emoji;
-                        parked_cars[i + 1][j] = car;
-                        double value = time * value_per_hour_average_size;
-                        System.out.println("You will shall pay $" + value);
-                        return;
-
-                    } else if (car instanceof small_car) {
-                        size[i][j] = color_car_emoji;
-                        parked_cars[i][j] = car;
-                        double value = time * value_per_hour_small_size;
-                        System.out.println("You will shall pay $" + value);
-                        return;
-                    }
-                } else if (size[i][j] != null) {
-                    System.out.println("This vacancy are not empty");
-                    return;
-
-                }
-
+    
+    
+        if (car instanceof average_car) {
+            if (row_vacancy < size.length - 1 && size[row_vacancy][column_vacancy] == null && size[row_vacancy + 1][column_vacancy] == null) {
+                size[row_vacancy][column_vacancy] = color_car_emoji;
+                parked_cars[row_vacancy][column_vacancy] = car;
+                size[row_vacancy + 1][column_vacancy] = color_car_emoji;
+                parked_cars[row_vacancy + 1][column_vacancy] = car;
+                double value = time * value_per_hour_average_size;
+                System.out.println("You will shall pay $" + value);
+                return;
+            } else {
+                System.out.println("This vacancy are not empty");
+                return;
+            }
+        } else if (car instanceof small_car) {
+            if (row_vacancy < size.length && size[row_vacancy][column_vacancy] == null) {
+                size[row_vacancy][column_vacancy] = color_car_emoji;
+                parked_cars[row_vacancy][column_vacancy] = car;
+                double value = time * value_per_hour_small_size;
+                System.out.println("You will shall pay $" + value);
+                return;
+            } else {
+                System.out.println("This vacancy are not empty");
+                return;
             }
         }
-
     }
+
 
     public void getCarin(int row, int column) {
         if (parked_cars[row][column] != null) {
